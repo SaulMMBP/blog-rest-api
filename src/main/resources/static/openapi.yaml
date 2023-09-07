@@ -1,0 +1,1029 @@
+openapi: 3.0.3
+info:
+  title: Spring Boot Blog REST API
+  description: A Spring Boot Blog REST API Documentation
+  contact:
+    name: Saul Malagon Martinez
+    email: smalagonmtz@gmail.com
+    url: https://github.com/SaulMMBP
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Spring Boot Blog REST API
+  url: https://github.com/SaulMMBP/repository
+servers:
+  - url: https://localhost:8080/api
+    description: Developement server
+paths:
+  /auth/login:
+    post:
+      operationId: login
+      summary: Request a JSON Web Token
+      description: Get a JSON Web Token to authorize POST, PUT and DELETE requests
+      tags:
+        - Authentication
+      requestBody:
+        $ref: '#/components/requestBodies/LoginBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkLogin'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/BadCredentials'
+  /auth/register:
+    post:
+      operationId: register
+      summary: Register a user
+      description: Register a user
+      tags:
+        - Authentication
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkRegister'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /categories:
+    post:
+      operationId: createCategory
+      summary: Create a category
+      security:
+        - BearerAuth: [ADMIN]
+      description: Create a category and return it as response
+      tags:
+        - Categories
+      requestBody:
+        $ref: '#/components/requestBodies/CategoryBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      operationId: getCategories
+      summary: Get all categories
+      description: Get a JSON with a list of all the categories
+      tags:
+        - Categories
+      responses:
+        '200':
+          $ref: '#/components/responses/OkGetAllCategories'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /categories/{categoryId}:
+    get:
+      operationId: getCategory
+      summary: Get a category
+      description: Get a category by id
+      tags:
+        - Categories
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkGetCategory'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: updateCategory
+      summary: Update a category
+      security:
+        - BearerAuth: [ADMIN]
+      description: Update a category by id
+      tags:
+        - Categories
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      requestBody:
+        $ref: '#/components/requestBodies/CategoryBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkPutCategory'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      operationId: deleteCategory
+      summary: Delete a category
+      security:
+        - BearerAuth: [ADMIN]
+      description: Delete a category by id
+      tags:
+        - Categories
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkDeleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /posts:
+    post:
+      operationId: createPost
+      summary: Create a post
+      security:
+        - BearerAuth: [ADMIN]
+      description: Create a post
+      tags:
+        - Post
+      requestBody:
+        $ref: '#/components/requestBodies/PostBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedPost'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      operationId: getPosts
+      summary: Get all posts
+      description: Get all posts
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkGetAllPosts'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /posts/{postId}:
+    get:
+      operationId: getPost
+      summary: Get a post
+      description: Get a post by id
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/postId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkGetPost'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: updatePost
+      summary: Update a post
+      security:
+        - BearerAuth: [ADMIN]
+      description: Update a post by id
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/postId'
+      requestBody:
+        $ref: '#/components/requestBodies/PostBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkPutPost'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      operationId: deletePost
+      summary: Delete a post
+      security:
+        - BearerAuth: [ADMIN]
+      description: Delete a post by id
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/postId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkDeleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /posts/category/{categoryId}:
+    get:
+      operationId: getPostsByCategory
+      summary: Get all posts that belong to a category
+      description: Get all posts that belong to a category with id = categoryId
+      tags:
+        - Post
+      parameters:
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkGetAllPostsByCategory'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /posts/{postId}/comments:
+    post:
+      operationId: createComment
+      summary: Create a comment
+      security:
+        - BearerAuth: [ADMIN]
+      description: Create a comment that belong to a post with id = postId
+      tags:
+        - Comments
+      parameters:
+        - $ref: '#/components/parameters/postId'
+      requestBody:
+        $ref: '#/components/requestBodies/CommentBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreatedComment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      operationId: getCommentsByPost
+      summary: Get all comments that belong to a post
+      description: Get all comments that belong to a post with id = postId
+      tags:
+        - Comments
+      parameters:
+        - $ref: '#/components/parameters/postId'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/sort'
+      responses:
+        '200':
+            $ref: '#/components/responses/OkGetAllComments'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /posts/{postId}/comments/{categoryId}:
+    get:
+      operationId: getComment
+      summary: Get a comment
+      description: Get a comment by id
+      tags:
+        - Comments
+      parameters:
+        - $ref: '#/components/parameters/postId'
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkGetComment'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: updateComment
+      summary: Update a comment
+      security:
+        - BearerAuth: [ADMIN]
+      description: Update a comment by id
+      tags:
+        - Comments
+      parameters:
+        - $ref: '#/components/parameters/postId'
+        - $ref: '#/components/parameters/categoryId'
+      requestBody:
+        $ref: '#/components/requestBodies/CommentBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkPutComment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      operationId: deleteComment
+      summary: Delete a comment
+      security:
+        - BearerAuth: [ADMIN]
+      description: Delete a comment by id
+      tags:
+        - Comments
+      parameters:
+        - $ref: '#/components/parameters/postId'
+        - $ref: '#/components/parameters/categoryId'
+      responses:
+        '200':
+          $ref: '#/components/responses/OkDeleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Authentication information is missing or invalid
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      
+components:
+  parameters:
+    categoryId:
+      in: path
+      name: categoryId
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: Numeric ID of a category
+    postId:
+      in: path
+      name: postId
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: Numeric ID of a post
+    commentId:
+      in: path
+      name: commentId
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: Numeric ID of a comment
+    page:
+      in: query
+      name: page
+      schema:
+        type: integer
+      required: false
+      description: The page number of the response, starts at 0
+    size:
+      in: query
+      name: size
+      schema:
+        type: integer
+      required: false
+      description: The page size of the response
+    sort:
+      in: query
+      name: sort
+      schema:
+        type: string
+      required: false
+      description: The sorting and direction option of the response
+      example: sort=title,asc
+  
+  schemas:
+    Login:
+      type: object
+      properties:
+        usernameOrEmail:
+          type: string
+        password:
+          type: string
+      required:
+        - usernameOrEmail
+        - password
+    Register:
+      type: object
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - name
+        - username
+        - email
+        - password
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        description:
+          type: string
+        content:
+          type: string
+        categoryId:
+          type: integer
+          format: int64
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+      required:
+        - title
+        - description
+        - content
+        - categoryId
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+        body:
+          type: string
+      required:
+        - name
+        - email
+        - body
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - description
+    ErrorDetails:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        message:
+          type: string
+        details:
+          type: string
+    JWT:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        tokenType:
+          type: string
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+
+  requestBodies:
+    LoginBody:
+      description: A JSON containing username or email and password
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Login'
+          examples:
+            UserExample:
+              value:
+                usernameOrEmail: saul
+                password: saul
+            AdminExample:
+              value:
+                usernameOrEmail: admin
+                password: admin
+    RegisterBody:
+      description: A JSON containing name, username, email and password
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Register'
+    PostBody:
+      description: A JSON containing title, description, content and category id of the post
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Post'
+          example:
+            title: "How to Java"
+            description: "A really easy Java tutorial"
+            content: "Java is..."
+            categoryId: 1
+    CommentBody:
+      description: A JSON containing name, email and body of the comment
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Comment'
+          example:
+            name: "John Doe"
+            email: "john.doe@mail.com"
+            body: "Amazing post, dude"
+    CategoryBody:
+      description: A JSON containing name and description of the category
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+          example:
+            name: 'Java'
+            description: 'About Java'
+      
+  responses:
+    OkLogin:
+      description: JWT Obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/JWT'
+    OkRegister:
+      description: User register successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+    OkGetAllCategories:
+      description: All categories obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+          example:
+            _embedded:
+              categories:
+                - id: 1
+                  name: "Java"
+                  description: "About Java"
+                - id: 2
+                  name: "Python"
+                  description: "About Python"
+                - id: 3
+                  name: "JavaScript"
+                  description: "About JavaScript"
+                - id: 4
+                  name: "Chickens"
+                  description: "About Chickens"
+    OkGetCategory:
+      description: Category obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+          example:
+            id: 1,
+            name: "Java"
+            description: "About Java"
+            _links:
+              self:
+                href: "http://localhost:8080/api/categories/1"
+              categories:
+                href: "http://localhost:8080/api/categories"
+    OkPutCategory:
+      description: Category updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+          example:
+            id: 1,
+            name: "Java"
+            description: "About Java"
+            _links:
+              self:
+                href: "http://localhost:8080/api/categories/1"
+              categories:
+                href: "http://localhost:8080/api/categories"
+    OkDeleted:
+      description: Resource deleted successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          example:
+            message: "Resource deleted successfully"
+    OkGetAllPosts:
+      description: A paginated posts collection obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Post'
+          example:
+            _embedded:
+              posts:
+              - id: 1
+                title: blog post 1
+                description: blog post description 1
+                content: blog post content 1
+                comments:
+                - id: 3
+                  name: John
+                  email: john@gmail.com
+                  body: nive and useful
+                  _links:
+                    self:
+                      href: http://localhost:8080/api/posts/1/comments/3
+                    post:
+                      href: http://localhost:8080/api/posts/1
+                    comments:
+                      href: http://localhost:8080/api/posts/1/comments
+                - id: 2
+                  name: John Doe
+                  email: john.doe@gmail.com
+                  body: very informative post
+                  _links:
+                    self:
+                      href: http://localhost:8080/api/posts/1/comments/2
+                    post:
+                      href: http://localhost:8080/api/posts/1
+                    comments:
+                      href: http://localhost:8080/api/posts/1/comments
+                _links:
+                  self:
+                    href: http://localhost:8080/api/posts/1
+                  posts:
+                    href: http://localhost:8080/api/posts
+              - id: 2
+                title: blog post 2
+                description: blog post description 2
+                content: blog post content 2
+                _links:
+                  self:
+                    href: http://localhost:8080/api/posts/2
+                  posts:
+                    href: http://localhost:8080/api/posts
+            _links:
+              first:
+                href: http://localhost:8080/api/posts?page=0&size=2
+              self:
+                href: http://localhost:8080/api/posts?page=0&size=2
+              next:
+                href: http://localhost:8080/api/posts?page=1&size=2
+              last:
+                href: http://localhost:8080/api/posts?page=14&size=2
+            page:
+              size: 2
+              totalElements: 29
+              totalPages: 15
+              number: 0
+    OkGetPost:
+      description: Post obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Post'
+          example:
+            id: 1
+            title: blog post 1
+            description: blog post description 1
+            content: blog post content 1
+            comments:
+            - id: 3
+              name: John
+              email: john@gmail.com
+              body: nive and useful
+              _links:
+                self:
+                  href: http://localhost:8080/api/posts/1/comments/3
+                post:
+                  href: http://localhost:8080/api/posts/1
+                comments:
+                  href: http://localhost:8080/api/posts/1/comments
+            - id: 2
+              name: John Doe
+              email: john.doe@gmail.com
+              body: very informative post
+              _links:
+                self:
+                  href: http://localhost:8080/api/posts/1/comments/2
+                post:
+                  href: http://localhost:8080/api/posts/1
+                comments:
+                  href: http://localhost:8080/api/posts/1/comments
+            _links:
+              self:
+                href: http://localhost:8080/api/posts/1
+              posts:
+                href: http://localhost:8080/api/posts
+    OkPutPost:
+      description: Category updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+          example:
+            id: 2
+            title: blog post 2 updated
+            description: blog post description 2 updated
+            content: blog post content 2 updated
+            categoryId: 2
+            _links:
+              self:
+                href: http://localhost:8080/api/posts/2
+              posts:
+                href: http://localhost:8080/api/posts
+    OkGetAllPostsByCategory:
+      description: A paginated posts collection of a category obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Post'
+          example:
+            _embedded:
+              posts:
+              - id: 2
+                title: blog post 2 updated
+                description: blog post description 2 updated
+                content: blog post content 2 updated
+                categoryId: 2
+                _links:
+                  self:
+                    href: http://localhost:8080/api/posts/2
+                  posts:
+                    href: http://localhost:8080/api/posts
+              - id: 26
+                title: blog post 26
+                description: blog post description 26
+                content: blog post content 26
+                categoryId: 2
+                _links:
+                  self:
+                    href: http://localhost:8080/api/posts/26
+                  posts:
+                    href: http://localhost:8080/api/posts
+              - id: 30
+                title: blog post 31
+                description: blog post description 31
+                content: blog post content 31
+                categoryId: 2
+                _links:
+                  self:
+                    href: http://localhost:8080/api/posts/30
+                  posts:
+                    href: http://localhost:8080/api/posts
+            _links:
+              self:
+                href: http://localhost:8080/api/posts/category/2?page=0&size=10
+            page:
+              size: 10
+              totalElements: 3
+              totalPages: 1
+              number: 0
+    OkGetAllComments:
+      description: A paginated comment collection for a post obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Comment'
+          example:
+            _embedded:
+              comments:
+              - id: 2
+                name: john doe
+                email: john.doe@gmail.com
+                body: very informative post
+                _links:
+                  self:
+                    href: http://localhost:8080/api/posts/1/comments/2
+                  post:
+                    href: http://localhost:8080/api/posts/1
+                  comments:
+                    href: http://localhost:8080/api/posts/1/comments
+              - id: 3
+                name: John
+                email: john@gmail.com
+                body: nive and useful
+                _links:
+                  self:
+                    href: http://localhost:8080/api/posts/1/comments/3
+                  post:
+                    href: http://localhost:8080/api/posts/1
+                  comments:
+                    href: http://localhost:8080/api/posts/1/comments
+            _links:
+              self:
+                href: http://localhost:8080/api/posts/1/comments?page=0&size=10
+            page:
+              size: 10
+              totalElements: 2
+              totalPages: 1
+              number: 0
+    OkGetComment:
+      description: Comment of a post obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Comment'
+          example:
+            id: 2
+            name: john doe
+            email: john.doe@gmail.com
+            body: very informative post
+            _links:
+              self:
+                href: http://localhost:8080/api/posts/1/comments/2
+              post:
+                href: http://localhost:8080/api/posts/1
+              comments:
+                href: http://localhost:8080/api/posts/1/comments
+    OkPutComment:
+      description: Comment of a post updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Comment'
+          example:
+            id: 2
+            name: John Doe
+            email: john.doe@gmail.com
+            body: nice and useful updated comment
+            _links:
+              self:
+                href: http://localhost:8080/api/posts/1/comments/2
+              post:
+                href: http://localhost:8080/api/posts/1
+              comments:
+                href: http://localhost:8080/api/posts/1/comments
+
+    CreatedCategory:
+      description: Category created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Category'
+          example:
+            id: 1,
+            name: "Java"
+            description: "About Java"
+            _links:
+              self:
+                href: "http://localhost:8080/api/categories/1"
+              categories:
+                href: "http://localhost:8080/api/categories"
+      links:
+        Self:
+          $ref: '#/components/links/GetCategory'
+        Categories:
+          $ref: '#/components/links/GetCategories'
+    CreatedPost:
+      description: Post created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Post'
+          example:
+            id: 1,
+            name: "Java"
+            description: "About Java"
+            _links:
+              self:
+                href: "http://localhost:8080/api/posts/1"
+              categories:
+                href: "http://localhost:8080/api/posts"
+      links:
+        Self:
+          $ref: '#/components/links/GetPost'
+        Categories:
+          $ref: '#/components/links/GetPosts'
+    CreatedComment:
+      description: Comment of a post obteined successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Comment'
+          example:
+            id: 2
+            name: John Doe
+            email: john.doe@gmail.com
+            body: very informative post
+            _links:
+              self:
+                href: http://localhost:8080/api/posts/1/comments/2
+              post:
+                href: http://localhost:8080/api/posts/1
+              comments:
+                href: http://localhost:8080/api/posts/1/comments
+
+    BadRequest:
+      description: A field's value isn't valid
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+          example:
+            field1: "Must not be empty"
+            field2: "Must have 10 characters at least"
+    Unauthorized:
+      description: Not have permission for this operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
+          example:
+            timestamp: '2023-09-06T06:25:10.662+00:00'
+            message: Access Denied
+            details: uri=/api/
+    InternalServerError:
+      description: Unexpected Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
+          example:
+            timestamp: '2023-09-06T06:09:40.283+00:00'
+            message: 'Failed to convert value of type ''java.lang.String'' to required type ''java.lang.Long'';
+              For input string: ""1""'
+            details: uri=/api/
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
+          example:
+            timestamp: '2023-09-06T06:49:29.424+00:00'
+            message: 'Resource not found with Id : 6'
+            details: uri=/api/
+    BadCredentials:
+      description: The user and/or password are incorrect
+      content:
+        application/json: 
+          schema:
+            $ref: '#/components/schemas/ErrorDetails'
+          example:
+            timestamp: '2023-09-06T06:51:41.583+00:00'
+            message: Bad credentials
+            details: uri=/api/auth/login
+
+  links:
+    GetCategory:
+      operationId: getCategory
+    GetCategories:
+      operationId: getCategories
+    GetPost:
+      operationId: getPost
+    GetPosts:
+      operationId: getPosts
+    GetComment:
+      operationId: getComment
+    GetCommentsByPost:
+      operationId: getCommentsByPost
+    First:
+      operationId: first
+    Self:
+      operationId: self
+    Next:
+      operationId: next
+    Last:
+      operationId: last
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: You can get a bearer token (JWT) in /auth/login
